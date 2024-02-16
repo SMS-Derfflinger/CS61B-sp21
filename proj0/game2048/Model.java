@@ -185,7 +185,6 @@ public class Model extends Observable {
                 }
             }
         }
-
         board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
