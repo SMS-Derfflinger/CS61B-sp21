@@ -1,6 +1,5 @@
 package timingtest;
 import edu.princeton.cs.algs4.Stopwatch;
-import net.sf.saxon.expr.Component;
 
 /**
  * Created by hug.
