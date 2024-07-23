@@ -17,11 +17,7 @@ public class ArrayDeque<T> implements Deque<T> {
     private void resize(int capacity) {
         T[] a = (T[]) new Object[capacity];
         for (int i = 0; i < size; i++) {
-            if (first + 1 + i < items.length) {
-                a[i] = items[first + 1 + i];
-            } else {
-                a[i] = items[first + 1 + i - items.length];
-            }
+            a[i] = get(i);
         }
         items = a;
         first = items.length - 1;
@@ -69,14 +65,13 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public void printDeque() {
-
+        for (int i = 0; i < size; i++) {
+            System.out.print(get(i) + " ");
+        }
     }
 
     public T getFirst() {
-        if (first == items.length - 1) {
-            return items[0];
-        }
-        return items[first + 1];
+        return get(0);
     }
 
     @Override
@@ -100,10 +95,7 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
     public T getLast() {
-        if (last == 0) {
-            return items[items.length - 1];
-        }
-        return items[last - 1];
+        return get(size - 1);
     }
 
     @Override
@@ -136,5 +128,18 @@ public class ArrayDeque<T> implements Deque<T> {
         } else {
             return items[first + index + 1 - items.length];
         }
+    }
+
+    public boolean equals(Object o) {
+        if (!(o instanceof ArrayDeque)) {
+            return false;
+        }
+        ArrayDeque<T> deque = (ArrayDeque<T>) o;
+        for (int i = 0; i < deque.size(); i++) {
+            if (deque.get(i) != this.get(i)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
