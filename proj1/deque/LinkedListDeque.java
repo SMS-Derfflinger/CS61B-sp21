@@ -1,6 +1,8 @@
 package deque;
 
-public class LinkedListDeque<T> implements Deque<T> {
+import java.util.Iterator;
+
+public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     // two sentinel nodes
     private final InnerNode<T> first;
     private final InnerNode<T> last;
@@ -135,6 +137,11 @@ public class LinkedListDeque<T> implements Deque<T> {
         return true;
     }
 
+    @Override
+    public Iterator<T> iterator() {
+        return new DequeIterator();
+    }
+
     private class InnerNode<T> {
         public T item;
         public InnerNode<T> prev;
@@ -148,6 +155,29 @@ public class LinkedListDeque<T> implements Deque<T> {
             item = t;
             prev = null;
             next = null;
+        }
+    }
+
+    private class DequeIterator implements Iterator<T> {
+        private InnerNode<T> t;
+
+        public DequeIterator() {
+            t = first.next;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return t.next != last;
+        }
+
+        @Override
+        public T next() {
+            if (hasNext()) {
+                T item = t.next.item;
+                t = t.next;
+                return item;
+            }
+            return null;
         }
     }
 }
