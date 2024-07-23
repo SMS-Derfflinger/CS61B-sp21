@@ -8,7 +8,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     private final InnerNode<T> last;
     private int size;
 
-    public LinkedListDeque(){
+    public LinkedListDeque() {
         first = new InnerNode<>(null);
         last = new InnerNode<>(null);
         first.next = last;
@@ -96,14 +96,14 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         return current.item;
     }
 
-    public T getFirst() {
+    private T getFirst() {
         if (first.next == last) {
             return null;
         }
         return first.next.item;
     }
 
-    public T getLast() {
+    private T getLast() {
         if (last.prev == first) {
             return null;
         }
@@ -143,15 +143,15 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     private class InnerNode<T> {
-        public T item;
-        public InnerNode<T> prev;
-        public InnerNode<T> next;
-        public InnerNode() {
+        private T item;
+        private InnerNode<T> prev;
+        private InnerNode<T> next;
+        InnerNode() {
             item = null;
             prev = null;
             next = null;
         }
-        public InnerNode(T t) {
+        InnerNode(T t) {
             item = t;
             prev = null;
             next = null;
@@ -161,7 +161,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     private class DequeIterator implements Iterator<T> {
         private InnerNode<T> t;
 
-        public DequeIterator() {
+        DequeIterator() {
             t = first.next;
         }
 

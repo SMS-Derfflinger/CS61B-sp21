@@ -72,7 +72,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
-    public T getFirst() {
+    private T getFirst() {
         return get(0);
     }
 
@@ -96,7 +96,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         return removeItem;
     }
 
-    public T getLast() {
+    private T getLast() {
         return get(size - 1);
     }
 
@@ -153,7 +153,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private class DequeIterator implements Iterator<T> {
         private int index;
 
-        public DequeIterator() {
+        DequeIterator() {
             index = 0;
         }
 

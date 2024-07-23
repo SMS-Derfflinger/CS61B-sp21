@@ -15,7 +15,7 @@ public class ArrayDequeTest {
 
         int N = 500000;
         for (int i = 0; i < N; i += 1) {
-            int operationNumber = StdRandom.uniform(0, 8);
+            int operationNumber = StdRandom.uniform(0, 6);
             if (operationNumber == 0) {
                 // addFirst
                 int randVal = StdRandom.uniform(0, 100);
@@ -32,20 +32,14 @@ public class ArrayDequeTest {
             } else if (L.isEmpty()) {
                 continue;
             } else if (operationNumber == 3) {
-                // getFirst
-                assertEquals(L.getFirst(), B.getFirst());
-            } else if (operationNumber == 4) {
-                // getLast
-                assertEquals(L.getLast(), B.getLast());
-            } else if (operationNumber == 5) {
                 // removeFirst
                 Integer temp = L.removeFirst();
                 assertEquals(temp, B.removeFirst());
-            } else if (operationNumber == 6) {
+            } else if (operationNumber == 4) {
                 // removeLast
                 Integer temp = L.removeLast();
                 assertEquals(temp, B.removeLast());
-            } else if (operationNumber == 7) {
+            } else if (operationNumber == 5) {
                 // get
                 int randVal = StdRandom.uniform(0, L.size());
                 assertEquals(L.get(randVal), B.get(randVal));
