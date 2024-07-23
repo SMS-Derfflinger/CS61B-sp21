@@ -28,8 +28,7 @@ public class ArrayDequeTest {
                 B.addLast(randVal);
             } else if (operationNumber == 2) {
                 // size
-                int size = L.size();
-                assertEquals(size, B.size());
+                assertEquals(L.size(), B.size());
             } else if (L.isEmpty()) {
                 continue;
             } else if (operationNumber == 3) {
