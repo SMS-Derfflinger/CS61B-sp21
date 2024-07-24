@@ -128,7 +128,13 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         if (!(o instanceof LinkedListDeque)) {
             return false;
         }
+        if (o == this) {
+            return true;
+        }
         LinkedListDeque<T> deque = (LinkedListDeque<T>) o;
+        if (deque.size() != this.size()) {
+            return false;
+        }
         for (int i = 0; i < deque.size(); i++) {
             if (deque.get(i) != this.get(i)) {
                 return false;
@@ -162,7 +168,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         private InnerNode<T> t;
 
         DequeIterator() {
-            t = first.next;
+            t = first;
         }
 
         @Override
