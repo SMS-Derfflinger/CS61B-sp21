@@ -10,6 +10,9 @@ This repository contains my solutions to the CS61B-sp21 labs and projects. (**up
 - [x] lab3: Randomizing Testing and Timing
     * Building Timing Tests and Randomized Comparison Tests.
     * Add condition to a breakpoint and create execution breakpoint.
+- [x] lab4: Git and Debugging
+    * merge git conflict
+    * exhaustively debug
 
 ## project
 
