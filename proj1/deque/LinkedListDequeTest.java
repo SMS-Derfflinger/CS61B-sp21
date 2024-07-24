@@ -133,20 +133,23 @@ public class LinkedListDequeTest {
     public void randomizedTest() {
         java.util.LinkedList<Integer> L = new LinkedList<>();
         LinkedListDeque<Integer> B = new LinkedListDeque<>();
+        LinkedListDeque<Integer> B1 = new LinkedListDeque<>();
 
         int N = 500000;
         for (int i = 0; i < N; i += 1) {
-            int operationNumber = StdRandom.uniform(0, 6);
+            int operationNumber = StdRandom.uniform(0, 7);
             if (operationNumber == 0) {
                 // addFirst
                 int randVal = StdRandom.uniform(0, 100);
                 L.addFirst(randVal);
                 B.addFirst(randVal);
+                B1.addFirst(randVal);
             } else if (operationNumber == 1) {
                 // addLast
                 int randVal = StdRandom.uniform(0, 100);
                 L.addLast(randVal);
                 B.addLast(randVal);
+                B1.addLast(randVal);
             } else if (operationNumber == 2) {
                 // size
                 int size = L.size();
@@ -156,16 +159,21 @@ public class LinkedListDequeTest {
             } else if (operationNumber == 3) {
                 // removeFirst
                 Integer temp = L.removeFirst();
+                B1.removeFirst();
                 assertEquals(temp, B.removeFirst());
             } else if (operationNumber == 4) {
                 // removeLast
                 Integer temp = L.removeLast();
+                B1.removeLast();
                 assertEquals(temp, B.removeLast());
             } else if (operationNumber == 5) {
                 // get
                 int randVal = StdRandom.uniform(0, L.size());
                 assertEquals(L.get(randVal), B.getRecursive(randVal));
                 assertEquals(L.get(randVal), B.get(randVal));
+            } else if (operationNumber == 6) {
+                // equals
+                assertTrue(B.equals(B1));
             }
         }
     }
@@ -182,7 +190,7 @@ public class LinkedListDequeTest {
     @Test
     public void equalsTest() {
         LinkedListDeque<String> L = new LinkedListDeque<>();
-        ArrayDeque<String> A = new ArrayDeque<>();
+        LinkedListDeque<String> A = new LinkedListDeque<>();
         L.addLast("12356");
         A.addLast("12356");
         L.addLast(" ");
