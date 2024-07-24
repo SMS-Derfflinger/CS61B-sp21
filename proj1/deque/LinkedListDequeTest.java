@@ -3,7 +3,6 @@ package deque;
 import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 
-import java.util.ArrayDeque;
 import java.util.LinkedList;
 
 import static org.junit.Assert.*;
@@ -177,8 +176,17 @@ public class LinkedListDequeTest {
         B.addLast(1);
         B.addLast(5);
         B.addLast(7);
-        for (int b : B) {
-            System.out.print(b + " ");
-        }
+        B.printDeque();
+    }
+
+    @Test
+    public void equalsTest() {
+        LinkedListDeque<String> L = new LinkedListDeque<>();
+        ArrayDeque<String> A = new ArrayDeque<>();
+        L.addLast("12356");
+        A.addLast("12356");
+        L.addLast(" ");
+        A.addLast(" ");
+        assertTrue(L.equals(A));
     }
 }
