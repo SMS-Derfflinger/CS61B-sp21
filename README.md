@@ -13,6 +13,11 @@ This repository contains my solutions to the CS61B-sp21 labs and projects. (**up
 - [x] lab4: Git and Debugging
     * merge git conflict
     * exhaustively debug
+- [ ] lab5: Peer Code Review for proj1
+- [x] lab6: Project 2 Getting Started
+    * run Java from the command line and run the tests
+    * work with files and directories in Java
+    * Persistence: serialize Java objects to a file and read them back
 
 ## project
 
