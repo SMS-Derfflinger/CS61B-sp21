@@ -18,6 +18,8 @@ This repository contains my solutions to the CS61B-sp21 labs and projects. (**up
     * run Java from the command line and run the tests
     * work with files and directories in Java
     * Persistence: serialize Java objects to a file and read them back
+- [x] lab7: BSTMap
+    * create BSTMap, a BST-based implementation of the Map61B interface, which represents a basic tree-based map
 
 ## project
 
