@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     private InnerNode root;
-    public int size;
+    private int size;
     @Override
     public void clear() {
         root = null;
@@ -150,7 +150,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         return keySet().iterator();
     }
 
-    public void printlnOrder() {
+    public void printInOrder() {
         printLnOrderRecursion(root);
     }
 
