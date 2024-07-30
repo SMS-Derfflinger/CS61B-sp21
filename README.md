@@ -20,6 +20,8 @@ This repository contains my solutions to the CS61B-sp21 labs and projects. (**up
     * Persistence: serialize Java objects to a file and read them back
 - [x] lab7: BSTMap
     * create BSTMap, a BST-based implementation of the Map61B interface, which represents a basic tree-based map
+- [x] lab8: HashMap
+    * create an implementation of the Map61B interface, which represents a hash map
 
 ## project
 
