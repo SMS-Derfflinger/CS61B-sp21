@@ -2,6 +2,9 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static gitlet.Utils.*;
 
@@ -126,5 +129,65 @@ public class Repository implements Serializable {
         currentCommit = getCurrentCommit();
         Blob addBlob = new Blob(filePath);
         addBlob(addBlob);
+    }
+
+    private static void checkCommitMessage(String message) {
+        if (message.isEmpty()) {
+            System.out.println("Please enter a commit message.");
+            System.exit(0);
+        }
+    }
+
+    private static void checkStage() {
+        Map<String, String> addStageMap = addStage.getBlobID();
+        if (addStageMap.isEmpty()) {
+            System.out.println("No changes added to the commit.");
+            System.exit(0);
+        }
+    }
+
+    private static Map<String, String> mixBlobID(Map<String, String> blobMap, Map<String, String> addStageMap) {
+        if (addStageMap.isEmpty()) {
+            return blobMap;
+        }
+        for (String key : addStageMap.keySet()) {
+            blobMap.put(key, addStageMap.get(key));
+        }
+        return blobMap;
+    }
+
+    private static List<String> getParents() {
+        List<String> parents = currentCommit.getParents();
+        parents.add(currentCommit.getID());
+        return parents;
+    }
+
+    private static Commit createCommit(String message) {
+        checkStage();
+        Map<String, String> addStageMap = addStage.getBlobID();
+        Map<String, String> blobID = currentCommit.getBlobID();
+
+        Map<String, String> mixBlobID = mixBlobID(blobID, addStageMap);
+        List<String> parents = getParents();
+        return new Commit(message, parents, mixBlobID, new Date());
+    }
+
+    private static void saveCommit(Commit newCommit) {
+        newCommit.saveCommit();
+        addStage = new Stage();
+        addStage.saveStage(ADD_FILE);
+        currentCommit = newCommit;
+        String branch = getCurrentBranch();
+        File branchFile = join(HEADS_DIR, branch);
+        writeContents(branchFile, currentCommit.getID());
+    }
+
+    /** commit command function*/
+    public static void commitCommand(String message) {
+        checkCommitMessage(message);
+        addStage = stageFromFile(ADD_FILE);
+        currentCommit = getCurrentCommit();
+        Commit newCommit = createCommit(message);
+        saveCommit(newCommit);
     }
 }

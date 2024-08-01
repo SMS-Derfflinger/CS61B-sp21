@@ -28,15 +28,13 @@ public class Commit implements Serializable {
     private List<String> parents;
     private Map<String, String> blobID; // file to blob
     private Date commitTime;
-    private String timeStamp;
 
     public Commit(String commitMessage, List<String> parents, Map<String, String> blobID, Date date) {
         this.message = commitMessage;
         this.parents = parents;
         this.blobID = blobID;
         this.commitTime = date;
-        this.timeStamp = getTimeStamp(date);
-        this.ID = sha1(this.timeStamp, commitMessage, parents.toString(), blobID.toString());
+        this.ID = sha1(blobID.toString(), parents.toString(), commitMessage, getTimeStamp(date));
     }
 
     public Commit() {
@@ -59,6 +57,10 @@ public class Commit implements Serializable {
 
     public Map<String, String> getBlobID() {
         return this.blobID;
+    }
+
+    public List<String> getParents() {
+        return parents;
     }
 
     public boolean containBlob(Blob blob) {

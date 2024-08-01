@@ -23,6 +23,8 @@ public class Main {
                 Repository.addCommand(args[1]);
                 break;
             case "commit":
+                validateNumArgs(args, 2);
+                Repository.commitCommand(args[1]);
                 break;
             case "rm":
                 break;

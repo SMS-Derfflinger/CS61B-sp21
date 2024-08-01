@@ -41,4 +41,8 @@ public class Stage implements Serializable {
     public void saveStage(File file) {
         writeObject(file, this);
     }
+
+    public Map<String, String> getBlobID() {
+        return this.blobID;
+    }
 }
