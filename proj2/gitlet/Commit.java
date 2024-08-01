@@ -26,7 +26,7 @@ public class Commit implements Serializable {
     private String ID;
     private String message;
     private List<String> parents;
-    private Map<String, String> blobID;
+    private Map<String, String> blobID; // file to blob
     private Date commitTime;
     private String timeStamp;
 
@@ -59,5 +59,9 @@ public class Commit implements Serializable {
 
     public Map<String, String> getBlobID() {
         return this.blobID;
+    }
+
+    public boolean containBlob(Blob blob) {
+        return this.blobID.containsValue(blob.getID());
     }
 }

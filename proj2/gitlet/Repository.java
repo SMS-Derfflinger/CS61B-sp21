@@ -5,8 +5,6 @@ import java.io.Serializable;
 
 import static gitlet.Utils.*;
 
-// TODO: any imports you need here
-
 /** Represents a gitlet repository.
  *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
@@ -108,10 +106,7 @@ public class Repository implements Serializable {
     private static void addBlob(Blob blob) {
         // check if the current working version of the file is
         // identical to the version in the current commit.
-        if (currentCommit.getBlobID().containsValue(blob.getID())) {
-            return;
-        }
-        if (addStage.containBlob(blob)) {
+        if (currentCommit.containBlob(blob) || addStage.containBlob(blob)) {
             return;
         }
 
