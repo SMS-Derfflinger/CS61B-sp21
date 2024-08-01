@@ -1,7 +1,9 @@
 package gitlet;
 
+import static gitlet.Repository.GITLET_DIR;
+
 /** Driver class for Gitlet, a subset of the Git version-control system.
- *  @author TODO
+ *  @author SMS-Derfflinger
  */
 public class Main {
 
@@ -9,16 +11,49 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     public static void main(String[] args) {
-        // TODO: what if args is empty?
+        //args = new String[]{"add", "111.txt"};
+        checkArgc(args);
         String firstArg = args[0];
         switch(firstArg) {
             case "init":
-                // TODO: handle the `init` command
+                init();
                 break;
             case "add":
-                // TODO: handle the `add [filename]` command
+                validateNumArgs(args, 2);
+                Repository.addCommand(args[1]);
                 break;
-            // TODO: FILL THE REST IN
+            case "commit":
+                break;
+            case "rm":
+                break;
+            default:
+                System.out.println("No command with that name exists.");
+                System.exit(0);
         }
     }
+
+    private static void checkArgc(String[] args) {
+        if (args == null) {
+            System.out.println("Please enter a command.");
+            System.exit(0);
+        }
+    }
+
+    private static void validateNumArgs(String[] args, int num) {
+        if (args.length != num) {
+            System.out.println("Incorrect operands.");
+            System.exit(0);
+        }
+    }
+
+    private static void init() {
+        if (GITLET_DIR.exists()) {
+            System.out.println("A Gitlet version-control system already exists in the current directory.");
+            System.exit(0);
+        } else {
+            Repository.setUpPersistence();
+        }
+    }
+
+
 }

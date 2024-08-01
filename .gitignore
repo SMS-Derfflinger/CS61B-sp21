@@ -6,7 +6,7 @@
 !**/pom.xml
 !.fatweleminus
 !.gitignore
-!library-sp21
+library-sp21
 !foods.csv
 *.class
 *.log
@@ -390,3 +390,6 @@ tramp
 !byow/**/*.mp4
 !byow/**/*.gif
 !byow/**/*.wav
+
+proj2/*.txt
+library-sp21
