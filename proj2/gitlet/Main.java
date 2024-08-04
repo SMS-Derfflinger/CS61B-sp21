@@ -11,7 +11,7 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     public static void main(String[] args) {
-        //args = new String[]{"add", "111.txt"};
+        args = new String[]{"rm", "111.txt"};
         checkArgc(args);
         String firstArg = args[0];
         switch(firstArg) {
@@ -27,6 +27,8 @@ public class Main {
                 Repository.commitCommand(args[1]);
                 break;
             case "rm":
+                validateNumArgs(args, 2);
+                Repository.rmCommand(args[1]);
                 break;
             default:
                 System.out.println("No command with that name exists.");

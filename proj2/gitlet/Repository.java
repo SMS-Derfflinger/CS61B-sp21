@@ -190,4 +190,25 @@ public class Repository implements Serializable {
         Commit newCommit = createCommit(message);
         saveCommit(newCommit);
     }
+
+    /** rm command function*/
+    public static void rmCommand(String fileName) {
+        File removeFile = join(CWD, fileName);
+        String filePath = removeFile.getPath();
+
+        addStage = stageFromFile(ADD_FILE);
+        removeStage = stageFromFile(REMOVE_FILE);
+        currentCommit = getCurrentCommit();
+        if (addStage.containPath(filePath) && !currentCommit.containPath(filePath)) {
+            addStage.delete(filePath);
+            addStage.saveStage(ADD_FILE);
+        } else if (currentCommit.containPath(filePath)) {
+            removeStage.add(new Blob(removeFile));
+            removeStage.saveStage(REMOVE_FILE);
+
+            if (removeFile.exists()) {
+                removeFile.delete();
+            }
+        }
+    }
 }

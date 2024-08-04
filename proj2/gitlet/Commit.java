@@ -66,4 +66,8 @@ public class Commit implements Serializable {
     public boolean containBlob(Blob blob) {
         return this.blobID.containsValue(blob.getID());
     }
+
+    public boolean containPath(String filename) {
+        return this.blobID.containsKey(filename);
+    }
 }
