@@ -242,7 +242,23 @@ public class Repository implements Serializable {
         List<String> parents = currentCommit.getParents();
         for (String parent : parents) {
             commit = commitFromFile(parent);
-            printMessage(commit);
+            if (commit != null) {
+                printMessage(commit);
+            }
+        }
+    }
+
+    /** global-log command function*/
+    public static void globalLogCommand() {
+        List<String> commitList = plainFilenamesIn(OBJECT_DIR);
+        Commit commit;
+        if (commitList != null) {
+            for (String ID : commitList) {
+                commit = commitFromFile(ID);
+                if (commit != null) {
+                    printMessage(commit);
+                }
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     public static void main(String[] args) {
-        args = new String[]{"log"};
+        args = new String[]{"global-log"};
         checkArgc(args);
         String firstArg = args[0];
         switch(firstArg) {
@@ -37,6 +37,11 @@ public class Main {
                 checkGitlet();
                 validateNumArgs(args, 1);
                 Repository.logCommand();
+                break;
+            case "global-log":
+                checkGitlet();
+                validateNumArgs(args, 1);
+                Repository.globalLogCommand();
                 break;
             default:
                 System.out.println("No command with that name exists.");
