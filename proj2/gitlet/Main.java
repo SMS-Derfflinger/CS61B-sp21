@@ -19,14 +19,17 @@ public class Main {
                 init();
                 break;
             case "add":
+                checkGitlet();
                 validateNumArgs(args, 2);
                 Repository.addCommand(args[1]);
                 break;
             case "commit":
+                checkGitlet();
                 validateNumArgs(args, 2);
                 Repository.commitCommand(args[1]);
                 break;
             case "rm":
+                checkGitlet();
                 validateNumArgs(args, 2);
                 Repository.rmCommand(args[1]);
                 break;
@@ -59,5 +62,10 @@ public class Main {
         }
     }
 
-
+    private static void checkGitlet() {
+        if (!GITLET_DIR.exists()) {
+            System.out.println("A Gitlet version-control system already exists in the current directory.");
+            System.exit(0);
+        }
+    }
 }
