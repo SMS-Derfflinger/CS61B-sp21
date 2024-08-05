@@ -138,20 +138,19 @@ public class Repository implements Serializable {
         }
     }
 
-    private static void checkStage() {
-        Map<String, String> addStageMap = addStage.getBlobID();
-        if (addStageMap.isEmpty()) {
+    private static void checkStage(Map<String, String> addStageMap, Map<String, String> removeStageMap) {
+        if (addStageMap.isEmpty() && removeStageMap.isEmpty()) {
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
     }
 
-    private static Map<String, String> mixBlobID(Map<String, String> blobMap, Map<String, String> addStageMap) {
-        if (addStageMap.isEmpty()) {
-            return blobMap;
-        }
+    private static Map<String, String> mixBlobID(Map<String, String> blobMap, Map<String, String> addStageMap, Map<String, String> removeStageMap) {
         for (String key : addStageMap.keySet()) {
             blobMap.put(key, addStageMap.get(key));
+        }
+        for (String key : removeStageMap.keySet()) {
+            blobMap.remove(key);
         }
         return blobMap;
     }
@@ -163,11 +162,12 @@ public class Repository implements Serializable {
     }
 
     private static Commit createCommit(String message) {
-        checkStage();
         Map<String, String> addStageMap = addStage.getBlobID();
+        Map<String, String> removeStageMap = removeStage.getBlobID();
         Map<String, String> blobID = currentCommit.getBlobID();
 
-        Map<String, String> mixBlobID = mixBlobID(blobID, addStageMap);
+        checkStage(addStageMap, removeStageMap);
+        Map<String, String> mixBlobID = mixBlobID(blobID, addStageMap, removeStageMap);
         List<String> parents = getParents();
         return new Commit(message, parents, mixBlobID, new Date());
     }
@@ -186,6 +186,7 @@ public class Repository implements Serializable {
     public static void commitCommand(String message) {
         checkCommitMessage(message);
         addStage = stageFromFile(ADD_FILE);
+        removeStage = stageFromFile(REMOVE_FILE);
         currentCommit = getCurrentCommit();
         Commit newCommit = createCommit(message);
         saveCommit(newCommit);
