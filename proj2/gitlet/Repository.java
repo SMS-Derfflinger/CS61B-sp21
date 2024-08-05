@@ -217,4 +217,32 @@ public class Repository implements Serializable {
             System.exit(0);
         }
     }
+
+    private static Commit commitFromFile(String ID) {
+        File findCommit = join(OBJECT_DIR, ID);
+        if (findCommit.exists()) {
+            return readObject(findCommit, Commit.class);
+        }
+        return null;
+    }
+
+    private static void printMessage(Commit commit) {
+        System.out.println("===");
+        System.out.println("commit " + commit.getID());
+        System.out.println("Date: " + commit.getTimeStamp());
+        System.out.println(commit.getMessage() + "\n");
+    }
+
+    /** log command function*/
+    public static void logCommand() {
+        currentCommit = getCurrentCommit();
+        printMessage(currentCommit);
+
+        Commit commit;
+        List<String> parents = currentCommit.getParents();
+        for (String parent : parents) {
+            commit = commitFromFile(parent);
+            printMessage(commit);
+        }
+    }
 }

@@ -11,7 +11,7 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     public static void main(String[] args) {
-        args = new String[]{"rm", "111.txt"};
+        args = new String[]{"log"};
         checkArgc(args);
         String firstArg = args[0];
         switch(firstArg) {
@@ -32,6 +32,11 @@ public class Main {
                 checkGitlet();
                 validateNumArgs(args, 2);
                 Repository.rmCommand(args[1]);
+                break;
+            case "log":
+                checkGitlet();
+                validateNumArgs(args, 1);
+                Repository.logCommand();
                 break;
             default:
                 System.out.println("No command with that name exists.");
@@ -64,7 +69,7 @@ public class Main {
 
     private static void checkGitlet() {
         if (!GITLET_DIR.exists()) {
-            System.out.println("A Gitlet version-control system already exists in the current directory.");
+            System.out.println("Not in an initialized Gitlet directory.");
             System.exit(0);
         }
     }

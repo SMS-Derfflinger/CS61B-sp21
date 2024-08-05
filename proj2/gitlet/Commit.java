@@ -70,4 +70,13 @@ public class Commit implements Serializable {
     public boolean containPath(String filename) {
         return this.blobID.containsKey(filename);
     }
+
+    public String getTimeStamp() {
+        DateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.US);
+        return dateFormat.format(this.commitTime);
+    }
+
+    public String getMessage() {
+        return this.message;
+    }
 }
