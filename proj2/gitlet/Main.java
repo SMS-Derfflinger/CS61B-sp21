@@ -11,7 +11,7 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     public static void main(String[] args) {
-        args = new String[]{"global-log"};
+        args = new String[]{"find", "initial Commit"};
         checkArgc(args);
         String firstArg = args[0];
         switch(firstArg) {
@@ -42,6 +42,11 @@ public class Main {
                 checkGitlet();
                 validateNumArgs(args, 1);
                 Repository.globalLogCommand();
+                break;
+            case "find":
+                checkGitlet();
+                validateNumArgs(args, 2);
+                Repository.findCommand(args[1]);
                 break;
             default:
                 System.out.println("No command with that name exists.");

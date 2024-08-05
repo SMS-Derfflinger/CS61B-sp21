@@ -261,4 +261,18 @@ public class Repository implements Serializable {
             }
         }
     }
+
+    /** find command function*/
+    public static void findCommand(String message) {
+        List<String> commitList = plainFilenamesIn(OBJECT_DIR);
+        Commit commit;
+        if (commitList != null) {
+            for (String ID : commitList) {
+                commit = commitFromFile(ID);
+                if (commit != null && commit.getMessage().equals(message)) {
+                    printMessage(commit);
+                }
+            }
+        }
+    }
 }
