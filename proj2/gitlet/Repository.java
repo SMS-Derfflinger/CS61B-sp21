@@ -209,6 +209,9 @@ public class Repository implements Serializable {
             if (removeFile.exists()) {
                 removeFile.delete();
             }
+        } else {
+            System.out.println("No reason to remove the file.");
+            System.exit(0);
         }
     }
 }
