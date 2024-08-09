@@ -2,6 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -334,5 +335,30 @@ public class Repository implements Serializable {
         printRemoved();
         printModified();
         printUntracked();
+    }
+
+    private static void checkFilePath(String filePath) {
+        currentCommit = getCurrentCommit();
+        if (!currentCommit.containPath(filePath)) {
+            System.out.println("File does not exist in that commit.");
+            System.exit(0);
+        }
+    }
+
+    private static Blob getBlobByFileName(String filePath) {
+        String blobID = currentCommit.getBlobID().get(filePath);
+        File BLOB_FILE = join(OBJECT_DIR, blobID);
+        return readObject(BLOB_FILE, Blob.class);
+    }
+
+    /** checkout -- [file name] command function*/
+    public static void checkoutFileCommand(String fileName) {
+        File targetFile = join(CWD, fileName);
+        String filePath = targetFile.getPath();
+        checkFilePath(filePath);
+
+        Blob targetBlob = getBlobByFileName(filePath);
+        byte[] bytes = targetBlob.getBlobBytes();
+        writeContents(targetFile, new String(bytes, StandardCharsets.UTF_8));
     }
 }

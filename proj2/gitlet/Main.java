@@ -11,7 +11,7 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     public static void main(String[] args) {
-        args = new String[]{"status"};
+        args = new String[]{"checkout", "--", "111.txt"};
         checkArgc(args);
         String firstArg = args[0];
         switch(firstArg) {
@@ -52,6 +52,22 @@ public class Main {
                 checkGitlet();
                 validateNumArgs(args, 1);
                 Repository.statusCommand();
+                break;
+            case "checkout":
+                checkGitlet();
+                switch (args.length) {
+                    case 2:
+                        break;
+                    case 3:
+                        if (!args[1].equals("--")) {
+                            System.out.println("Incorrect operands.");
+                            System.exit(0);
+                        }
+                        Repository.checkoutFileCommand(args[2]);
+                        break;
+                    case 4:
+                        break;
+                }
                 break;
             default:
                 System.out.println("No command with that name exists.");
