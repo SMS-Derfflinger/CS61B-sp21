@@ -38,7 +38,7 @@ public class Commit implements Serializable {
     }
 
     public Commit() {
-        this("initial Commit", new LinkedList<>(), new HashMap<>(), new Date(0));
+        this("initial commit", new LinkedList<>(), new HashMap<>(), new Date(0));
     }
 
     private static String getTimeStamp(Date date) {
