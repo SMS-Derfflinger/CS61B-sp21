@@ -275,4 +275,64 @@ public class Repository implements Serializable {
             }
         }
     }
+
+    private static void printBranch() {
+        currentCommit = getCurrentCommit();
+        List<String> branches = plainFilenamesIn(HEADS_DIR);
+        String currentBranch = readContentsAsString(HEAD_FILE);
+
+        System.out.println("=== Branches ===");
+        System.out.println("*" + currentBranch);
+        if (branches != null) {
+            for (String branch : branches) {
+                if (branch.equals(currentBranch)) {
+                    continue;
+                }
+                System.out.println(branch);
+            }
+        }
+        System.out.println();
+    }
+
+    private static void printKeys(Map<String, String> blobID) {
+        for (String key : blobID.keySet()) {
+            System.out.println(key);
+        }
+        System.out.println();
+    }
+
+    private static void printStaged() {
+        addStage = stageFromFile(ADD_FILE);
+        Map<String, String> blobID = addStage.getBlobID();
+
+        System.out.println("=== Staged Files ===");
+        printKeys(blobID);
+    }
+
+    private static void printRemoved() {
+        removeStage = stageFromFile(REMOVE_FILE);
+        Map<String, String> blobID = removeStage.getBlobID();
+
+        System.out.println("=== Removed Files ===");
+        printKeys(blobID);
+    }
+
+    private static void printModified() {
+        System.out.println("=== Modifications Not Staged For Commit ===");
+        System.out.println();
+    }
+
+    private static void printUntracked() {
+        System.out.println("=== Untracked Files ===");
+        System.out.println();
+    }
+
+    /** status command function*/
+    public static void statusCommand() {
+        printBranch();
+        printStaged();
+        printRemoved();
+        printModified();
+        printUntracked();
+    }
 }
