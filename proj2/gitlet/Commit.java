@@ -26,7 +26,7 @@ public class Commit implements Serializable {
     private String ID;
     private String message;
     private List<String> parents;
-    private Map<String, String> blobID; // file to blob
+    private Map<String, String> blobID; // file to blob, absolute path
     private Date commitTime;
 
     public Commit(String commitMessage, List<String> parents, Map<String, String> blobID, Date date) {
