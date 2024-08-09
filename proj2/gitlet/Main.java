@@ -66,6 +66,11 @@ public class Main {
                         Repository.checkoutFileCommand(args[2]);
                         break;
                     case 4:
+                        if (!args[2].equals("--")) {
+                            System.out.println("Incorrect operands.");
+                            System.exit(0);
+                        }
+                        Repository.checkoutFileCommand(args[1], args[3]);
                         break;
                 }
                 break;

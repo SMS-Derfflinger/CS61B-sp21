@@ -100,11 +100,14 @@ public class Repository implements Serializable {
         return readContentsAsString(branchFile);
     }
 
+    private static Commit getCommitByID(String commitID) {
+        File commitFile = join(OBJECT_DIR, commitID);
+        return readObject(commitFile, Commit.class);
+    }
+
     private static Commit getCurrentCommit() {
         String commitID = getCurrentCommitID();
-        File commitFile = join(OBJECT_DIR, commitID);
-        //System.out.println(commitFile);
-        return readObject(commitFile, Commit.class);
+        return getCommitByID(commitID);
     }
 
     private static void addBlob(Blob blob) {
@@ -337,16 +340,15 @@ public class Repository implements Serializable {
         printUntracked();
     }
 
-    private static void checkFilePath(String filePath) {
-        currentCommit = getCurrentCommit();
-        if (!currentCommit.containPath(filePath)) {
+    private static void checkFilePath(Commit commit, String filePath) {
+        if (!commit.containPath(filePath)) {
             System.out.println("File does not exist in that commit.");
             System.exit(0);
         }
     }
 
-    private static Blob getBlobByFileName(String filePath) {
-        String blobID = currentCommit.getBlobID().get(filePath);
+    private static Blob getBlobByFileName(Commit commit, String filePath) {
+        String blobID = commit.getBlobID().get(filePath);
         File BLOB_FILE = join(OBJECT_DIR, blobID);
         return readObject(BLOB_FILE, Blob.class);
     }
@@ -355,9 +357,22 @@ public class Repository implements Serializable {
     public static void checkoutFileCommand(String fileName) {
         File targetFile = join(CWD, fileName);
         String filePath = targetFile.getPath();
-        checkFilePath(filePath);
+        currentCommit = getCurrentCommit();
+        checkFilePath(currentCommit, filePath);
 
-        Blob targetBlob = getBlobByFileName(filePath);
+        Blob targetBlob = getBlobByFileName(currentCommit, filePath);
+        byte[] bytes = targetBlob.getBlobBytes();
+        writeContents(targetFile, new String(bytes, StandardCharsets.UTF_8));
+    }
+
+    /** checkout [commit id] -- [file name] command function*/
+    public static void checkoutFileCommand(String commitID, String fileName) {
+        File targetFile = join(CWD, fileName);
+        String filePath = targetFile.getPath();
+        Commit commit = getCommitByID(commitID);
+        checkFilePath(commit, filePath);
+
+        Blob targetBlob = getBlobByFileName(commit, filePath);
         byte[] bytes = targetBlob.getBlobBytes();
         writeContents(targetFile, new String(bytes, StandardCharsets.UTF_8));
     }
