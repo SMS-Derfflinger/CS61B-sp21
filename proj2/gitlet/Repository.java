@@ -300,6 +300,7 @@ public class Repository implements Serializable {
 
     private static void printKeys(Map<String, String> blobID) {
         for (String key : blobID.keySet()) {
+            key = key.substring(key.lastIndexOf("\\") + 1);
             System.out.println(key);
         }
         System.out.println();

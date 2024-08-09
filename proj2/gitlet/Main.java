@@ -11,7 +11,7 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     public static void main(String[] args) {
-        args = new String[]{"checkout", "--", "111.txt"};
+        args = new String[]{"status"};
         checkArgc(args);
         String firstArg = args[0];
         switch(firstArg) {
