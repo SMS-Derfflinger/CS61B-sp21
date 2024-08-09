@@ -35,4 +35,8 @@ public class Blob implements Serializable {
     public String getID() {
         return ID;
     }
+
+    public byte[] getBlobBytes() {
+        return blobBytes;
+    }
 }
