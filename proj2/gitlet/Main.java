@@ -81,7 +81,7 @@ public class Main {
         }
     }
 
-    private static void exitFailed(String message) {
+    public static void exitFailed(String message) {
         System.out.println(message);
         System.exit(0);
     }

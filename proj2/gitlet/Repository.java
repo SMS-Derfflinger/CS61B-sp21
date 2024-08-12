@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static gitlet.Main.exitFailed;
 import static gitlet.Utils.*;
 
 /** Represents a gitlet repository.
@@ -69,11 +70,6 @@ public class Repository implements Serializable {
         initCommit();
         initHEAD();
         initHeads();
-    }
-
-    private static void exitFailed(String message) {
-        System.out.println(message);
-        System.exit(0);
     }
 
     private static Stage stageFromFile(File stageFile) {
