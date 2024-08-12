@@ -57,47 +57,50 @@ public class Main {
                 checkGitlet();
                 switch (args.length) {
                     case 2:
+                        Repository.checkoutBranchCommand(args[1]);
                         break;
                     case 3:
                         if (!args[1].equals("--")) {
-                            System.out.println("Incorrect operands.");
-                            System.exit(0);
+                            exitFailed("Incorrect operands.");
                         }
                         Repository.checkoutFileCommand(args[2]);
                         break;
                     case 4:
                         if (!args[2].equals("--")) {
-                            System.out.println("Incorrect operands.");
-                            System.exit(0);
+                            exitFailed("Incorrect operands.");
                         }
                         Repository.checkoutFileCommand(args[1], args[3]);
+                        break;
+                    default:
+                        exitFailed("Incorrect operands.");
                         break;
                 }
                 break;
             default:
-                System.out.println("No command with that name exists.");
-                System.exit(0);
+                exitFailed("No command with that name exists.");
         }
+    }
+
+    private static void exitFailed(String message) {
+        System.out.println(message);
+        System.exit(0);
     }
 
     private static void checkArgc(String[] args) {
         if (args == null) {
-            System.out.println("Please enter a command.");
-            System.exit(0);
+            exitFailed("Please enter a command.");
         }
     }
 
     private static void validateNumArgs(String[] args, int num) {
         if (args.length != num) {
-            System.out.println("Incorrect operands.");
-            System.exit(0);
+            exitFailed("Incorrect operands.");
         }
     }
 
     private static void init() {
         if (GITLET_DIR.exists()) {
-            System.out.println("A Gitlet version-control system already exists in the current directory.");
-            System.exit(0);
+            exitFailed("A Gitlet version-control system already exists in the current directory.");
         } else {
             Repository.setUpPersistence();
         }
@@ -105,8 +108,7 @@ public class Main {
 
     private static void checkGitlet() {
         if (!GITLET_DIR.exists()) {
-            System.out.println("Not in an initialized Gitlet directory.");
-            System.exit(0);
+            exitFailed("Not in an initialized Gitlet directory.");
         }
     }
 }

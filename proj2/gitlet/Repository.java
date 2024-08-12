@@ -3,9 +3,7 @@ package gitlet;
 import java.io.File;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static gitlet.Utils.*;
 
@@ -73,6 +71,11 @@ public class Repository implements Serializable {
         initHeads();
     }
 
+    private static void exitFailed(String message) {
+        System.out.println(message);
+        System.exit(0);
+    }
+
     private static Stage stageFromFile(File stageFile) {
         if (!stageFile.exists()) {
             return new Stage();
@@ -83,8 +86,7 @@ public class Repository implements Serializable {
 
     private static void checkFilePath(File filePath) {
         if (!filePath.exists()) {
-            System.out.println("File does not exist.");
-            System.exit(0);
+            exitFailed("File does not exist.");
         }
     }
 
@@ -103,6 +105,12 @@ public class Repository implements Serializable {
     private static Commit getCommitByID(String commitID) {
         File commitFile = join(OBJECT_DIR, commitID);
         return readObject(commitFile, Commit.class);
+    }
+
+    private static Commit getCommitByBranch(String branchName) {
+        File branchFilePath = join(HEADS_DIR, branchName);
+        String commitID = readContentsAsString(branchFilePath);
+        return getCommitByID(commitID);
     }
 
     private static Commit getCurrentCommit() {
@@ -137,15 +145,13 @@ public class Repository implements Serializable {
 
     private static void checkCommitMessage(String message) {
         if (message.isEmpty()) {
-            System.out.println("Please enter a commit message.");
-            System.exit(0);
+            exitFailed("Please enter a commit message.");
         }
     }
 
     private static void checkStage(Map<String, String> addStageMap, Map<String, String> removeStageMap) {
         if (addStageMap.isEmpty() && removeStageMap.isEmpty()) {
-            System.out.println("No changes added to the commit.");
-            System.exit(0);
+            exitFailed("No changes added to the commit.");
         }
     }
 
@@ -217,8 +223,7 @@ public class Repository implements Serializable {
                 removeFile.delete();
             }
         } else {
-            System.out.println("No reason to remove the file.");
-            System.exit(0);
+            exitFailed("No reason to remove the file.");
         }
     }
 
@@ -343,8 +348,7 @@ public class Repository implements Serializable {
 
     private static void checkFilePath(Commit commit, String filePath) {
         if (!commit.containPath(filePath)) {
-            System.out.println("File does not exist in that commit.");
-            System.exit(0);
+            exitFailed("File does not exist in that commit.");
         }
     }
 
@@ -352,6 +356,11 @@ public class Repository implements Serializable {
         String blobID = commit.getBlobID().get(filePath);
         File BLOB_FILE = join(OBJECT_DIR, blobID);
         return readObject(BLOB_FILE, Blob.class);
+    }
+
+    private static void saveBlobToCWD(File targetFile, Blob targetBlob) {
+        byte[] bytes = targetBlob.getBlobBytes();
+        writeContents(targetFile, new String(bytes, StandardCharsets.UTF_8));
     }
 
     /** checkout -- [file name] command function*/
@@ -362,8 +371,7 @@ public class Repository implements Serializable {
         checkFilePath(currentCommit, filePath);
 
         Blob targetBlob = getBlobByFileName(currentCommit, filePath);
-        byte[] bytes = targetBlob.getBlobBytes();
-        writeContents(targetFile, new String(bytes, StandardCharsets.UTF_8));
+        saveBlobToCWD(targetFile, targetBlob);
     }
 
     /** checkout [commit id] -- [file name] command function*/
@@ -376,5 +384,93 @@ public class Repository implements Serializable {
         Blob targetBlob = getBlobByFileName(commit, filePath);
         byte[] bytes = targetBlob.getBlobBytes();
         writeContents(targetFile, new String(bytes, StandardCharsets.UTF_8));
+    }
+
+    private static void checkBranchExists(String branchName) {
+        List<String> allBranches = plainFilenamesIn(HEADS_DIR);
+        if (!allBranches.contains(branchName)) {
+            exitFailed("No such branch exists.");
+        }
+    }
+
+    private static void checkCurrentBranch(String branchName) {
+        String currentBranch = getCurrentBranch();
+        if (currentBranch.equals(branchName)) {
+            exitFailed("No need to checkout the current branch.");
+        }
+    }
+
+    // file absolute path
+    private static Set<String> getBothTrackedFiles(Commit newCommit) {
+        Set<String> currentFiles = currentCommit.getBlobID().keySet();
+        Set<String> newFiles = newCommit.getBlobID().keySet();
+        Set<String> bothFiles = new LinkedHashSet<>();
+        for (String file : newFiles) {
+            if (currentFiles.contains(file)) {
+                bothFiles.add(file);
+            }
+        }
+        return bothFiles;
+    }
+
+    private static void replaceFiles(Set<String> bothTrackedFiles, Commit newCommit) {
+        if (bothTrackedFiles.isEmpty()) {
+            return;
+        }
+        for (String fileName : bothTrackedFiles) {
+
+            Blob blob = getBlobByFileName(newCommit, fileName);
+            saveBlobToCWD(join(CWD, blob.getID()), blob);
+        }
+    }
+
+    /** Find the files' absolute path that are only tracked in targetCommit*/
+    private static Set<String> getOnlyFiles(Commit targetCommit, Commit newCommit) {
+        Set<String> currentFiles = targetCommit.getBlobID().keySet();
+        Set<String> newFiles = newCommit.getBlobID().keySet();
+        for (String filePath : newFiles) {
+            currentFiles.remove(filePath);
+        }
+        return currentFiles;
+    }
+
+    private static void deleteFiles(Set<String> onlyCurrentFiles) {
+        if (onlyCurrentFiles.isEmpty()) {
+            return;
+        }
+        for (String filePath : onlyCurrentFiles) {
+            File file = join(filePath);
+            restrictedDelete(file);
+        }
+    }
+
+    private static void createFiles(Set<String> onlyNewFiles, Commit newCommit) {
+        if (onlyNewFiles.isEmpty()) {
+            return;
+        }
+        for (String fileName : onlyNewFiles) {
+            File file = join(fileName);
+            if (file.exists()) {
+                exitFailed("There is an untracked file in the way; delete it, or add and commit it first.");
+            }
+        }
+        replaceFiles(onlyNewFiles, newCommit);
+    }
+
+    /** checkout [branchname] command function*/
+    public static void checkoutBranchCommand(String branchName) {
+        checkBranchExists(branchName);
+        checkCurrentBranch(branchName);
+        Commit newCommit = getCommitByBranch(branchName);
+        currentCommit = getCurrentCommit();
+
+        Set<String> bothTrackedFiles = getBothTrackedFiles(newCommit);
+        replaceFiles(bothTrackedFiles, newCommit);
+
+        Set<String> onlyCurrentFiles = getOnlyFiles(currentCommit, newCommit);
+        deleteFiles(onlyCurrentFiles);
+
+        Set<String> onlyNewFiles = getOnlyFiles(newCommit, currentCommit);
+        createFiles(onlyNewFiles, newCommit);
     }
 }
