@@ -11,7 +11,7 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     public static void main(String[] args) {
-        args = new String[]{"commit", "Main two files"};
+        //args = new String[]{"commit", "Main two files"};
         checkArgc(args);
         String firstArg = args[0];
         switch(firstArg) {
