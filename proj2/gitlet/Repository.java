@@ -239,14 +239,6 @@ public class Repository implements Serializable {
         }
     }
 
-    private static Commit commitFromFile(String ID) {
-        File findCommit = join(OBJECT_DIR, ID);
-        if (findCommit.exists()) {
-            return readObject(findCommit, Commit.class);
-        }
-        return null;
-    }
-
     private static void printMessage(Commit commit) {
         System.out.println("===");
         System.out.println("commit " + commit.getID());
@@ -262,7 +254,7 @@ public class Repository implements Serializable {
         Commit commit;
         List<String> parents = currentCommit.getParents();
         for (String parent : parents) {
-            commit = commitFromFile(parent);
+            commit = getCommitByID(parent);
             if (commit != null) {
                 printMessage(commit);
             }
@@ -275,7 +267,7 @@ public class Repository implements Serializable {
         Commit commit;
         if (commitList != null) {
             for (String ID : commitList) {
-                commit = commitFromFile(ID);
+                commit = getCommitByID(ID);
                 if (commit != null) {
                     printMessage(commit);
                 }
@@ -289,7 +281,7 @@ public class Repository implements Serializable {
         Commit commit;
         if (commitList != null) {
             for (String ID : commitList) {
-                commit = commitFromFile(ID);
+                commit = getCommitByID(ID);
                 if (commit != null && commit.getMessage().equals(message)) {
                     printMessage(commit);
                 }
