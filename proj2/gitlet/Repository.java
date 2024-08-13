@@ -217,6 +217,7 @@ public class Repository implements Serializable {
         currentCommit = getCurrentCommit();
         Commit newCommit = createCommit(message);
         saveCommit(newCommit);
+        resetStages();
     }
 
     /** rm command function*/
