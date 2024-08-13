@@ -199,10 +199,6 @@ public class Repository implements Serializable {
 
     private static void saveCommit(Commit newCommit) {
         newCommit.saveCommit();
-        addStage = new Stage();
-        addStage.saveStage(ADD_FILE);
-        removeStage = new Stage();
-        removeStage.saveStage(REMOVE_FILE);
         currentCommit = newCommit;
         String branch = getCurrentBranch();
         File branchFile = join(HEADS_DIR, branch);
