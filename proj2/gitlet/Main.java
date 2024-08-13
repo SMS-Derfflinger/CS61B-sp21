@@ -76,6 +76,11 @@ public class Main {
                         break;
                 }
                 break;
+            case "branch":
+                checkGitlet();
+                validateNumArgs(args, 2);
+                Repository.branchCommand(args[1]);
+                break;
             default:
                 exitFailed("No command with that name exists.");
         }

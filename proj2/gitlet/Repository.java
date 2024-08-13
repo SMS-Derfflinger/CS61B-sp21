@@ -385,7 +385,7 @@ public class Repository implements Serializable {
 
     private static void checkBranchExists(String branchName) {
         List<String> allBranches = plainFilenamesIn(HEADS_DIR);
-        if (!allBranches.contains(branchName)) {
+        if (allBranches != null && !allBranches.contains(branchName)) {
             exitFailed("No such branch exists.");
         }
     }
@@ -469,5 +469,20 @@ public class Repository implements Serializable {
 
         Set<String> onlyNewFiles = getOnlyFiles(newCommit, currentCommit);
         createFiles(onlyNewFiles, newCommit);
+    }
+
+    private static void checkBranchNotExists(String branchName) {
+        List<String> allBranches = plainFilenamesIn(HEADS_DIR);
+        if (allBranches != null && allBranches.contains(branchName)) {
+            exitFailed("A branch with that name already exists.");
+        }
+    }
+
+    /** checkout [branchname] command function*/
+    public static void branchCommand(String branchName) {
+        checkBranchNotExists(branchName);
+        currentCommit = getCurrentCommit();
+        File headFile = join(HEADS_DIR, branchName);
+        writeContents(headFile, currentCommit.getID());
     }
 }
