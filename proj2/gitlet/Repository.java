@@ -383,17 +383,18 @@ public class Repository implements Serializable {
         writeContents(targetFile, new String(bytes, StandardCharsets.UTF_8));
     }
 
-    private static void checkBranchExists(String branchName) {
+    /** check if the given branchname exists, exit if not exists*/
+    private static void checkBranchExists(String branchName, String message) {
         List<String> allBranches = plainFilenamesIn(HEADS_DIR);
         if (allBranches != null && !allBranches.contains(branchName)) {
-            exitFailed("No such branch exists.");
+            exitFailed(message);
         }
     }
 
-    private static void checkCurrentBranch(String branchName) {
+    private static void checkCurrentBranch(String branchName, String message) {
         String currentBranch = getCurrentBranch();
         if (currentBranch.equals(branchName)) {
-            exitFailed("No need to checkout the current branch.");
+            exitFailed(message);
         }
     }
 
@@ -456,8 +457,8 @@ public class Repository implements Serializable {
 
     /** checkout [branchname] command function*/
     public static void checkoutBranchCommand(String branchName) {
-        checkBranchExists(branchName);
-        checkCurrentBranch(branchName);
+        checkBranchExists(branchName, "No such branch exists.");
+        checkCurrentBranch(branchName, "No need to checkout the current branch.");
         Commit newCommit = getCommitByBranch(branchName);
         currentCommit = getCurrentCommit();
 
@@ -471,6 +472,7 @@ public class Repository implements Serializable {
         createFiles(onlyNewFiles, newCommit);
     }
 
+    /** check if the given branchname not exists, exit if exists*/
     private static void checkBranchNotExists(String branchName) {
         List<String> allBranches = plainFilenamesIn(HEADS_DIR);
         if (allBranches != null && allBranches.contains(branchName)) {
@@ -484,5 +486,14 @@ public class Repository implements Serializable {
         currentCommit = getCurrentCommit();
         File headFile = join(HEADS_DIR, branchName);
         writeContents(headFile, currentCommit.getID());
+    }
+
+    /** rm-branch [branchname] command function*/
+    public static void rmbranchCommand(String branchName) {
+        checkBranchExists(branchName, "A branch with that name does not exist.");
+        checkCurrentBranch(branchName, "Cannot remove the current branch.");
+
+        File targetFile = join(HEADS_DIR, branchName);
+        restrictedDelete(targetFile);
     }
 }
