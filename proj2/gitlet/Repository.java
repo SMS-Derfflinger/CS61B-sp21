@@ -98,9 +98,16 @@ public class Repository implements Serializable {
         return readContentsAsString(branchFile);
     }
 
-    private static Commit getCommitByID(String commitID) {
+    private static Commit getCommitByID(String commitID, String message) {
         File commitFile = join(OBJECT_DIR, commitID);
+        if (!commitFile.exists()) {
+            exitFailed(message);
+        }
         return readObject(commitFile, Commit.class);
+    }
+
+    private static Commit getCommitByID(String commitID) {
+        return getCommitByID(commitID, "");
     }
 
     private static Commit getCommitByBranch(String branchName) {
@@ -495,5 +502,20 @@ public class Repository implements Serializable {
 
         File targetFile = join(HEADS_DIR, branchName);
         restrictedDelete(targetFile);
+    }
+
+    /** reset [commitID] command function*/
+    public static void resetCommand(String commitID) {
+        Commit newCommit = getCommitByID(commitID, "No commit with that id exists.");
+        currentCommit = getCurrentCommit();
+
+        Set<String> bothTrackedFiles = getBothTrackedFiles(newCommit);
+        replaceFiles(bothTrackedFiles, newCommit);
+
+        Set<String> onlyCurrentFiles = getOnlyFiles(currentCommit, newCommit);
+        deleteFiles(onlyCurrentFiles);
+
+        Set<String> onlyNewFiles = getOnlyFiles(newCommit, currentCommit);
+        createFiles(onlyNewFiles, newCommit);
     }
 }

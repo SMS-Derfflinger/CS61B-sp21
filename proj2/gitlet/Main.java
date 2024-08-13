@@ -86,6 +86,11 @@ public class Main {
                 validateNumArgs(args, 2);
                 Repository.rmbranchCommand(args[1]);
                 break;
+            case "reset":
+                checkGitlet();
+                validateNumArgs(args, 2);
+                Repository.resetCommand(args[1]);
+                break;
             default:
                 exitFailed("No command with that name exists.");
         }
