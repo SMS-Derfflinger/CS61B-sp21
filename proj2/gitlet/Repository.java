@@ -147,8 +147,7 @@ public class Repository implements Serializable {
         checkFilePath(filePath);
 
         //System.out.println(filePath.getPath());
-        addStage = stageFromFile(ADD_FILE);
-        removeStage = stageFromFile(REMOVE_FILE);
+        addStage = getAddStage();
         currentCommit = getCurrentCommit();
         Blob addBlob = new Blob(filePath);
         addBlob(addBlob);
@@ -197,6 +196,8 @@ public class Repository implements Serializable {
         newCommit.saveCommit();
         addStage = new Stage();
         addStage.saveStage(ADD_FILE);
+        removeStage = new Stage();
+        removeStage.saveStage(REMOVE_FILE);
         currentCommit = newCommit;
         String branch = getCurrentBranch();
         File branchFile = join(HEADS_DIR, branch);
@@ -206,8 +207,8 @@ public class Repository implements Serializable {
     /** commit command function*/
     public static void commitCommand(String message) {
         checkCommitMessage(message);
-        addStage = stageFromFile(ADD_FILE);
-        removeStage = stageFromFile(REMOVE_FILE);
+        addStage = getAddStage();
+        removeStage = getRemoveStage();
         currentCommit = getCurrentCommit();
         Commit newCommit = createCommit(message);
         saveCommit(newCommit);
