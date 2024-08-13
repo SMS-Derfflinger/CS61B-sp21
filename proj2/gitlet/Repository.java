@@ -132,13 +132,18 @@ public class Repository implements Serializable {
     private static void addBlob(Blob blob) {
         // check if the current working version of the file is
         // identical to the version in the current commit.
-        if (currentCommit.containBlob(blob) || addStage.containBlob(blob)) {
+        if (currentCommit.containBlob(blob) && !removeStage.containBlob(blob) || addStage.containBlob(blob)) {
             return;
         }
 
-        blob.saveBlob();
-        addStage.add(blob);
-        addStage.saveStage(ADD_FILE);
+        if (!removeStage.containBlob(blob)) {
+            blob.saveBlob();
+            addStage.add(blob);
+            addStage.saveStage(ADD_FILE);
+        } else {
+            removeStage.delete(blob);
+            removeStage.saveStage(REMOVE_FILE);
+        }
     }
 
     /** add command function*/
@@ -146,8 +151,8 @@ public class Repository implements Serializable {
         File filePath = join(CWD, fileName);
         checkFilePath(filePath);
 
-        //System.out.println(filePath.getPath());
         addStage = getAddStage();
+        removeStage = getRemoveStage();
         currentCommit = getCurrentCommit();
         Blob addBlob = new Blob(filePath);
         addBlob(addBlob);

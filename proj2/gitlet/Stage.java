@@ -34,6 +34,10 @@ public class Stage implements Serializable {
         this.blobID.remove(key);
     }
 
+    public void delete(Blob blob) {
+        this.blobID.remove(blob.getPath(), blob.getID());
+    }
+
     public void add(Blob blob) {
         this.blobID.put(blob.getPath(), blob.getID());
     }
