@@ -80,6 +80,14 @@ public class Repository implements Serializable {
         }
     }
 
+    private static Stage getAddStage() {
+        return stageFromFile(ADD_FILE);
+    }
+
+    private static Stage getRemoveStage() {
+        return stageFromFile(REMOVE_FILE);
+    }
+
     private static void checkFilePath(File filePath) {
         if (!filePath.exists()) {
             exitFailed("File does not exist.");
@@ -462,13 +470,7 @@ public class Repository implements Serializable {
         replaceFiles(onlyNewFiles, newCommit);
     }
 
-    /** checkout [branchname] command function*/
-    public static void checkoutBranchCommand(String branchName) {
-        checkBranchExists(branchName, "No such branch exists.");
-        checkCurrentBranch(branchName, "No need to checkout the current branch.");
-        Commit newCommit = getCommitByBranch(branchName);
-        currentCommit = getCurrentCommit();
-
+    private static void fileOperations(Commit newCommit) {
         Set<String> bothTrackedFiles = getBothTrackedFiles(newCommit);
         replaceFiles(bothTrackedFiles, newCommit);
 
@@ -477,6 +479,24 @@ public class Repository implements Serializable {
 
         Set<String> onlyNewFiles = getOnlyFiles(newCommit, currentCommit);
         createFiles(onlyNewFiles, newCommit);
+    }
+
+    private static void resetStages() {
+        addStage = new Stage();
+        addStage.saveStage(ADD_FILE);
+        removeStage = new Stage();
+        removeStage.saveStage(REMOVE_FILE);
+    }
+
+    /** checkout [branchname] command function*/
+    public static void checkoutBranchCommand(String branchName) {
+        checkBranchExists(branchName, "No such branch exists.");
+        checkCurrentBranch(branchName, "No need to checkout the current branch.");
+        Commit newCommit = getCommitByBranch(branchName);
+        currentCommit = getCurrentCommit();
+
+        fileOperations(newCommit);
+        resetStages();
     }
 
     /** check if the given branchname not exists, exit if exists*/
@@ -509,13 +529,7 @@ public class Repository implements Serializable {
         Commit newCommit = getCommitByID(commitID, "No commit with that id exists.");
         currentCommit = getCurrentCommit();
 
-        Set<String> bothTrackedFiles = getBothTrackedFiles(newCommit);
-        replaceFiles(bothTrackedFiles, newCommit);
-
-        Set<String> onlyCurrentFiles = getOnlyFiles(currentCommit, newCommit);
-        deleteFiles(onlyCurrentFiles);
-
-        Set<String> onlyNewFiles = getOnlyFiles(newCommit, currentCommit);
-        createFiles(onlyNewFiles, newCommit);
+        fileOperations(newCommit);
+        resetStages();
     }
 }

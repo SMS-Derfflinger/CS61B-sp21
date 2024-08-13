@@ -45,4 +45,9 @@ public class Stage implements Serializable {
     public Map<String, String> getBlobID() {
         return this.blobID;
     }
+
+    public void reset() {
+        this.blobID = new HashMap<>();
+
+    }
 }
