@@ -476,6 +476,13 @@ public class Repository implements Serializable {
         }
     }
 
+    private static void createFilesNoCheck(Set<String> onlyNewFiles, Commit newCommit) {
+        if (onlyNewFiles.isEmpty()) {
+            return;
+        }
+        replaceFiles(onlyNewFiles, newCommit);
+    }
+
     private static void createFiles(Set<String> onlyNewFiles, Commit newCommit) {
         if (onlyNewFiles.isEmpty()) {
             return;
@@ -489,7 +496,7 @@ public class Repository implements Serializable {
         replaceFiles(onlyNewFiles, newCommit);
     }
 
-    private static void fileOperations(Commit newCommit) {
+    private static void fileOperations(Commit newCommit, boolean needCheck) {
         Set<String> bothTrackedFiles = getBothTrackedFiles(newCommit);
         replaceFiles(bothTrackedFiles, newCommit);
 
@@ -497,7 +504,11 @@ public class Repository implements Serializable {
         deleteFiles(onlyCurrentFiles);
 
         Set<String> onlyNewFiles = getOnlyFiles(newCommit, currentCommit);
-        createFiles(onlyNewFiles, newCommit);
+        if (needCheck) {
+            createFiles(onlyNewFiles, newCommit);
+        } else {
+            createFilesNoCheck(onlyNewFiles, newCommit);
+        }
     }
 
     private static void resetStages() {
@@ -514,7 +525,7 @@ public class Repository implements Serializable {
         Commit newCommit = getCommitByBranch(branchName);
         currentCommit = getCurrentCommit();
 
-        fileOperations(newCommit);
+        fileOperations(newCommit, true);
         resetStages();
     }
 
@@ -548,7 +559,7 @@ public class Repository implements Serializable {
         Commit newCommit = getCommitByID(commitID, "No commit with that id exists.");
         currentCommit = getCurrentCommit();
 
-        fileOperations(newCommit);
+        fileOperations(newCommit, false);
         resetStages();
     }
 }
