@@ -478,7 +478,7 @@ public class Repository implements Serializable {
         }
     }
 
-    /** checkout [branchname] command function*/
+    /** branch [branchname] command function*/
     public static void branchCommand(String branchName) {
         checkBranchNotExists(branchName);
         currentCommit = getCurrentCommit();
