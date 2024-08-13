@@ -233,7 +233,8 @@ public class Repository implements Serializable {
             addStage.saveStage(ADD_FILE);
             // stage it for removal and remove the file from the working directory
         } else if (currentCommit.containPath(filePath)) {
-            removeStage.add(new Blob(removeFile));
+            Blob targetBlob = getBlobByFileName(currentCommit, filePath);
+            removeStage.add(targetBlob);
             removeStage.saveStage(REMOVE_FILE);
 
             if (removeFile.exists()) {
