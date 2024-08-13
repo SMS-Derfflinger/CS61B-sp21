@@ -275,18 +275,33 @@ public class Repository implements Serializable {
         }
     }
 
+    private static void printCommitIDs(List<String> commitIDs) {
+        if (commitIDs.isEmpty()) {
+            exitFailed("Found no commit with that message.");
+        }
+        for (String ID : commitIDs) {
+            System.out.println(ID);
+        }
+    }
+
     /** find command function*/
     public static void findCommand(String message) {
         List<String> commitList = plainFilenamesIn(OBJECT_DIR);
         Commit commit;
+        List<String> commitIDs = new LinkedList<>();
         if (commitList != null) {
             for (String ID : commitList) {
-                commit = getCommitByID(ID);
-                if (commit != null && commit.getMessage().equals(message)) {
-                    printMessage(commit);
+                try {
+                    commit = getCommitByID(ID);
+                    if (commit != null && commit.getMessage().equals(message)) {
+                        commitIDs.add(ID);
+                    }
+                } catch (Exception ignored) {
                 }
             }
         }
+
+        printCommitIDs(commitIDs);
     }
 
     private static void printBranch() {
