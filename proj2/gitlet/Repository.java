@@ -549,7 +549,9 @@ public class Repository implements Serializable {
         checkCurrentBranch(branchName, "Cannot remove the current branch.");
 
         File targetFile = join(HEADS_DIR, branchName);
-        restrictedDelete(targetFile);
+        if (!targetFile.isDirectory()) {
+            targetFile.delete();
+        }
     }
 
     /** reset [commitID] command function*/
