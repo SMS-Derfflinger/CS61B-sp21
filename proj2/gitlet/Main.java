@@ -102,7 +102,7 @@ public class Main {
     }
 
     private static void checkArgc(String[] args) {
-        if (args == null) {
+        if (args == null || args.length == 0) {
             exitFailed("Please enter a command.");
         }
     }
