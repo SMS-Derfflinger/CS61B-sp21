@@ -263,13 +263,18 @@ public class Repository implements Serializable {
 
     /** global-log command function*/
     public static void globalLogCommand() {
-        List<String> commitList = plainFilenamesIn(OBJECT_DIR);
+        List<String> blobList = plainFilenamesIn(OBJECT_DIR);
         Commit commit;
-        if (commitList != null) {
-            for (String ID : commitList) {
-                commit = getCommitByID(ID);
-                if (commit != null) {
-                    printMessage(commit);
+
+        List<Commit> commitList = new LinkedList<>();
+        if (blobList != null) {
+            for (String ID : blobList) {
+                try {
+                    commit = getCommitByID(ID);
+                    if (commit != null) {
+                        printMessage(commit);
+                    }
+                } catch (Exception ignored) {
                 }
             }
         }
