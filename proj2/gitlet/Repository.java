@@ -526,6 +526,7 @@ public class Repository implements Serializable {
         currentCommit = getCurrentCommit();
 
         fileOperations(newCommit, true);
+        writeContents(HEAD_FILE, branchName);
         resetStages();
     }
 
