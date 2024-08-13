@@ -409,7 +409,7 @@ public class Repository implements Serializable {
     public static void checkoutFileCommand(String commitID, String fileName) {
         File targetFile = join(CWD, fileName);
         String filePath = targetFile.getPath();
-        Commit commit = getCommitByID(commitID);
+        Commit commit = getCommitByID(commitID, "No commit with that id exists.");
         checkFilePath(commit, filePath);
 
         Blob targetBlob = getBlobByFileName(commit, filePath);
