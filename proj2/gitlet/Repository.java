@@ -163,7 +163,7 @@ public class Repository implements Serializable {
 
     private static List<String> getParents() {
         List<String> parents = currentCommit.getParents();
-        parents.add(currentCommit.getID());
+        parents.add(0, currentCommit.getID());
         return parents;
     }
 
