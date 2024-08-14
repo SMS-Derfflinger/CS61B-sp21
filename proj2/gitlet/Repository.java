@@ -109,7 +109,7 @@ public class Repository implements Serializable {
     private static Commit getCommitByID(String commitID, String message) {
         if (commitID.length() == 40) {
             File commitFile = join(OBJECT_DIR, commitID);
-            if (!commitFile.exists()) {
+            if (!commitFile.exists() && message != null) {
                 exitFailed(message);
             }
             return readObject(commitFile, Commit.class);
@@ -127,7 +127,7 @@ public class Repository implements Serializable {
     }
 
     private static Commit getCommitByID(String commitID) {
-        return getCommitByID(commitID, "");
+        return getCommitByID(commitID, null);
     }
 
     private static Commit getCommitByBranch(String branchName) {
@@ -625,6 +625,7 @@ public class Repository implements Serializable {
         Map<String, String> splitBlobID = new HashMap<>(splitCommit.getBlobID());
         Map<String, String> targetBlobID = new HashMap<>(targetCommit.getBlobID());
         Map<String, String> currentBlobID = new HashMap<>(currentCommit.getBlobID());
+        Map<String, String> mergeBlobID = new HashMap<>();
 
         for (String filePath : splitBlobID.keySet()) {
             // case 1 2 3-1 3-2:
@@ -635,11 +636,19 @@ public class Repository implements Serializable {
                 if (splitBlobID.get(filePath).equals(currentBlobID.get(filePath)) &&
                         !splitBlobID.get(filePath).equals(targetBlobID.get(filePath))) {
                     Blob blob = getBlobByFileName(targetCommit, filePath);
+                    mergeBlobID.put(filePath, blob.getID());
                     saveBlobToCWD(join(filePath), blob);
                 }
 
                 // case 2: do nothing
+                if (!splitBlobID.get(filePath).equals(currentBlobID.get(filePath)) &&
+                        splitBlobID.get(filePath).equals(targetBlobID.get(filePath))) {
+                    mergeBlobID.put(filePath, currentBlobID.get(filePath));
+                }
                 // case 3-1: do nothing
+                if (currentBlobID.get(filePath).equals(targetBlobID.get(filePath))) {
+                    mergeBlobID.put(filePath, currentBlobID.get(filePath));
+                }
 
                 // case 3-2: conflict
                 if (!currentBlobID.get(filePath).equals(targetBlobID.get(filePath)) &&
@@ -658,13 +667,27 @@ public class Repository implements Serializable {
         }
 
         // case 4: do nothing
+        for (String filePath : currentBlobID.keySet()) {
+            if (!splitBlobID.containsKey(filePath) && !targetBlobID.containsKey(filePath)) {
+                mergeBlobID.put(filePath, currentBlobID.get(filePath));
+            }
+        }
 
         // case 5: add file
         for (String filePath : targetBlobID.keySet()) {
             if (!splitBlobID.containsKey(filePath) && !currentBlobID.containsKey(filePath)) {
                 Blob blob = getBlobByFileName(targetCommit, filePath);
+                mergeBlobID.put(filePath, targetBlobID.get(filePath));
                 saveBlobToCWD(join(filePath), blob);
             }
         }
+
+        String message = "Merged " + targetCommit.getID() + " into " + currentCommit.getID() + ".";
+        List<String> parents = new LinkedList<>(List.of(currentCommit.getID(), targetCommit.getID()));
+        parents.add(0, currentCommit.getID());
+        Commit mergeCommit = new Commit(message, parents, mergeBlobID);
+        mergeCommit.saveCommit();
+        File headFile = join(HEADS_DIR, branchName);
+        writeContents(headFile, mergeCommit.getID());
     }
 }

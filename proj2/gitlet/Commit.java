@@ -37,6 +37,10 @@ public class Commit implements Serializable {
         this.ID = sha1(blobID.toString(), parents.toString(), commitMessage, getTimeStamp(date));
     }
 
+    public Commit(String commitMessage, List<String> parents, Map<String, String> blobID) {
+        this(commitMessage, parents, blobID, new Date());
+    }
+
     public Commit() {
         this("initial commit", new LinkedList<>(), new HashMap<>(), new Date(0));
     }
