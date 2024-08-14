@@ -473,13 +473,6 @@ public class Repository implements Serializable {
         }
     }
 
-    private static void createFilesNoCheck(Set<String> onlyNewFiles, Commit newCommit) {
-        if (onlyNewFiles.isEmpty()) {
-            return;
-        }
-        replaceFiles(onlyNewFiles, newCommit);
-    }
-
     private static void createFiles(Set<String> onlyNewFiles, Commit newCommit) {
         if (onlyNewFiles.isEmpty()) {
             return;
@@ -493,7 +486,7 @@ public class Repository implements Serializable {
         replaceFiles(onlyNewFiles, newCommit);
     }
 
-    private static void fileOperations(Commit newCommit, boolean needCheck) {
+    private static void fileOperations(Commit newCommit) {
         Set<String> bothTrackedFiles = getBothTrackedFiles(newCommit);
         replaceFiles(bothTrackedFiles, newCommit);
 
@@ -501,11 +494,7 @@ public class Repository implements Serializable {
         deleteFiles(onlyCurrentFiles);
 
         Set<String> onlyNewFiles = getOnlyFiles(newCommit, currentCommit);
-        if (needCheck) {
-            createFiles(onlyNewFiles, newCommit);
-        } else {
-            createFilesNoCheck(onlyNewFiles, newCommit);
-        }
+        createFiles(onlyNewFiles, newCommit);
     }
 
     private static void resetStages() {
@@ -522,7 +511,7 @@ public class Repository implements Serializable {
         Commit newCommit = getCommitByBranch(branchName);
         currentCommit = getCurrentCommit();
 
-        fileOperations(newCommit, true);
+        fileOperations(newCommit);
         writeContents(HEAD_FILE, branchName);
         resetStages();
     }
@@ -559,7 +548,7 @@ public class Repository implements Serializable {
         Commit newCommit = getCommitByID(commitID, "No commit with that id exists.");
         currentCommit = getCurrentCommit();
 
-        fileOperations(newCommit, false);
+        fileOperations(newCommit);
         File branchFile = join(HEADS_DIR, getCurrentBranch());
         writeContents(branchFile, commitID);
 
