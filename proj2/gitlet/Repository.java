@@ -281,7 +281,6 @@ public class Repository implements Serializable {
         List<String> blobList = plainFilenamesIn(OBJECT_DIR);
         Commit commit;
 
-        List<Commit> commitList = new LinkedList<>();
         if (blobList != null) {
             for (String ID : blobList) {
                 try {
