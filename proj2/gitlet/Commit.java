@@ -59,6 +59,10 @@ public class Commit implements Serializable {
         return this.blobID;
     }
 
+    public Set<String> getKeySet() {
+        return new HashSet<>(this.blobID.keySet());
+    }
+
     public List<String> getParents() {
         return parents;
     }

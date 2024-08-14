@@ -431,9 +431,9 @@ public class Repository implements Serializable {
 
     // file absolute path
     private static Set<String> getBothTrackedFiles(Commit newCommit) {
-        Set<String> currentFiles = currentCommit.getBlobID().keySet();
-        Set<String> newFiles = newCommit.getBlobID().keySet();
-        Set<String> bothFiles = new LinkedHashSet<>();
+        Set<String> currentFiles = currentCommit.getKeySet();
+        Set<String> newFiles = newCommit.getKeySet();
+        Set<String> bothFiles = new HashSet<>();
         for (String file : newFiles) {
             if (currentFiles.contains(file)) {
                 bothFiles.add(file);
@@ -455,8 +455,8 @@ public class Repository implements Serializable {
 
     /** Find the files' absolute path that are only tracked in targetCommit*/
     private static Set<String> getOnlyFiles(Commit targetCommit, Commit newCommit) {
-        Set<String> currentFiles = targetCommit.getBlobID().keySet();
-        Set<String> newFiles = newCommit.getBlobID().keySet();
+        Set<String> currentFiles = targetCommit.getKeySet();
+        Set<String> newFiles = newCommit.getKeySet();
         for (String filePath : newFiles) {
             currentFiles.remove(filePath);
         }
@@ -500,7 +500,6 @@ public class Repository implements Serializable {
         Set<String> onlyCurrentFiles = getOnlyFiles(currentCommit, newCommit);
         deleteFiles(onlyCurrentFiles);
 
-        currentCommit = getCurrentCommit();
         Set<String> onlyNewFiles = getOnlyFiles(newCommit, currentCommit);
         if (needCheck) {
             createFiles(onlyNewFiles, newCommit);
@@ -561,6 +560,9 @@ public class Repository implements Serializable {
         currentCommit = getCurrentCommit();
 
         fileOperations(newCommit, false);
+        File branchFile = join(HEADS_DIR, getCurrentBranch());
+        writeContents(branchFile, commitID);
+
         resetStages();
     }
 }
