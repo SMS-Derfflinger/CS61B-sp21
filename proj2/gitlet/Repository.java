@@ -107,11 +107,23 @@ public class Repository implements Serializable {
     }
 
     private static Commit getCommitByID(String commitID, String message) {
-        File commitFile = join(OBJECT_DIR, commitID);
-        if (!commitFile.exists()) {
-            exitFailed(message);
+        if (commitID.length() == 40) {
+            File commitFile = join(OBJECT_DIR, commitID);
+            if (!commitFile.exists()) {
+                exitFailed(message);
+            }
+            return readObject(commitFile, Commit.class);
+        } else {
+            List<String> objectID = plainFilenamesIn(OBJECT_DIR);
+            if (objectID != null) {
+                for (String object : objectID) {
+                    if (commitID.equals(object.substring(0, commitID.length()))) {
+                        return readObject(join(OBJECT_DIR, object), Commit.class);
+                    }
+                }
+            }
+            return null;
         }
-        return readObject(commitFile, Commit.class);
     }
 
     private static Commit getCommitByID(String commitID) {
