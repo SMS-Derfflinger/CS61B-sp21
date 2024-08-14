@@ -446,10 +446,10 @@ public class Repository implements Serializable {
         if (bothTrackedFiles.isEmpty()) {
             return;
         }
-        for (String fileName : bothTrackedFiles) {
+        for (String filePath : bothTrackedFiles) {
 
-            Blob blob = getBlobByFileName(newCommit, fileName);
-            saveBlobToCWD(join(CWD, blob.getID()), blob);
+            Blob blob = getBlobByFileName(newCommit, filePath);
+            saveBlobToCWD(join(filePath), blob);
         }
     }
 
@@ -500,6 +500,7 @@ public class Repository implements Serializable {
         Set<String> onlyCurrentFiles = getOnlyFiles(currentCommit, newCommit);
         deleteFiles(onlyCurrentFiles);
 
+        currentCommit = getCurrentCommit();
         Set<String> onlyNewFiles = getOnlyFiles(newCommit, currentCommit);
         if (needCheck) {
             createFiles(onlyNewFiles, newCommit);
