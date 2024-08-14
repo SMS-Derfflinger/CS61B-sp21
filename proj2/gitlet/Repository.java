@@ -565,4 +565,106 @@ public class Repository implements Serializable {
 
         resetStages();
     }
+
+    private static void checkStage(String message) {
+        addStage = getAddStage();
+        removeStage = getRemoveStage();
+        if (!addStage.isEmpty() || !removeStage.isEmpty()) {
+            exitFailed(message);
+        }
+    }
+
+    private static String getSplitPointID(Commit targetCommit) {
+        List<String> currentParents = currentCommit.getParents();
+        List<String> targetParents = targetCommit.getParents();
+
+        // Get the ListIterator and traverse forward from the trail
+        ListIterator<String> currentIterator = currentParents.listIterator(currentParents.size());
+        ListIterator<String> targetIterator = currentParents.listIterator(targetParents.size());
+        String splitPointID = currentIterator.previous();
+
+        while (currentIterator.hasPrevious() && targetIterator.hasPrevious()) {
+            String currentElement = currentIterator.previous();
+            String targetElement = targetIterator.previous();
+            if (!currentElement.equals(targetElement)) {
+                break;
+            }
+            splitPointID = currentElement;
+        }
+
+        return splitPointID;
+    }
+
+    private static void checkCurrentID(String splitPointID) {
+        if (currentCommit.getID().equals(splitPointID)) {
+            writeContents(HEAD_FILE, splitPointID);
+            exitFailed("Current branch fast-forwarded.");
+        }
+    }
+
+    private static void checkTargetID(Commit targetCommit, String splitPointID) {
+        if (targetCommit.getID().equals(splitPointID)) {
+            exitFailed("Given branch is an ancestor of the current branch.");
+        }
+    }
+
+    /** merge [branchname] command function*/
+    public static void mergeCommand(String branchName) {
+        checkStage("You have uncommitted changes.");
+        checkBranchExists(branchName, "A branch with that name does not exist.");
+        checkCurrentBranch(branchName, "Cannot merge a branch with itself.");
+
+        currentCommit = getCurrentCommit();
+        Commit targetCommit = getCommitByBranch(branchName);
+        String splitPointID = getSplitPointID(targetCommit);
+
+        checkTargetID(targetCommit, splitPointID);
+        checkCurrentID(splitPointID);
+
+        Commit splitCommit = getCommitByID(splitPointID);
+        Map<String, String> splitBlobID = new HashMap<>(splitCommit.getBlobID());
+        Map<String, String> targetBlobID = new HashMap<>(targetCommit.getBlobID());
+        Map<String, String> currentBlobID = new HashMap<>(currentCommit.getBlobID());
+
+        for (String filePath : splitBlobID.keySet()) {
+            // case 1 2 3-1 3-2:
+            if (targetBlobID.containsKey(filePath) &&
+                    currentBlobID.containsKey(filePath)) {
+
+                // case 1: change file to other
+                if (splitBlobID.get(filePath).equals(currentBlobID.get(filePath)) &&
+                        !splitBlobID.get(filePath).equals(targetBlobID.get(filePath))) {
+                    Blob blob = getBlobByFileName(targetCommit, filePath);
+                    saveBlobToCWD(join(filePath), blob);
+                }
+
+                // case 2: do nothing
+                // case 3-1: do nothing
+
+                // case 3-2: conflict
+                if (!currentBlobID.get(filePath).equals(targetBlobID.get(filePath)) &&
+                        !splitBlobID.get(filePath).equals(currentBlobID.get(filePath)) &&
+                        !splitBlobID.get(filePath).equals(targetBlobID.get(filePath))) {
+                    // solve conflict
+                }
+            }
+
+            // case 6: delete file
+            if (currentBlobID.containsKey(filePath) && !targetBlobID.containsKey(filePath)) {
+                File removeFile = join(filePath);
+                removeFile.delete();
+            }
+            // case 7: do nothing
+        }
+
+        // case 4: do nothing
+
+        // case 5: add file
+        for (String filePath : targetBlobID.keySet()) {
+            if (!splitBlobID.containsKey(filePath) && !currentBlobID.containsKey(filePath)) {
+                Blob blob = getBlobByFileName(targetCommit, filePath);
+                saveBlobToCWD(join(filePath), blob);
+            }
+        }
+    }
 }

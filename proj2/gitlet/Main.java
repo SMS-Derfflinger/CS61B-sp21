@@ -91,6 +91,11 @@ public class Main {
                 validateNumArgs(args, 2);
                 Repository.resetCommand(args[1]);
                 break;
+            case "merge":
+                checkGitlet();
+                validateNumArgs(args, 2);
+                Repository.mergeCommand(args[1]);
+                break;
             default:
                 exitFailed("No command with that name exists.");
         }

@@ -30,6 +30,10 @@ public class Stage implements Serializable {
         return this.blobID.containsKey(path);
     }
 
+    public boolean isEmpty() {
+        return this.blobID.isEmpty();
+    }
+
     public void delete(String key) {
         this.blobID.remove(key);
     }
@@ -52,6 +56,5 @@ public class Stage implements Serializable {
 
     public void reset() {
         this.blobID = new HashMap<>();
-
     }
 }
