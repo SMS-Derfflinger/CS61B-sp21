@@ -31,6 +31,9 @@ This repository contains my solutions to the CS61B-sp21 labs and projects. (**up
 - [x] proj1:
     * build implementations of a “Double Ended Queue” using both lists and arrays in a package and add supporting testing
     * create another package for generating synthesized musical instruments using the deque package
+- [x] proj2:
+    * I finished the base part except for the merge.
+    * implementing a version-control system that mimics some of the basic features of the popular system Git. Ours is smaller and simpler.
 
 
 You can see the introductions of these labs and projects on the course's home page: https://sp21.datastructur.es
