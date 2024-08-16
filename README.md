@@ -1,6 +1,6 @@
 # CS61B-sp21
 
-This repository contains my solutions to the CS61B-sp21 labs and projects. (**updating**)
+This repository contains my solutions to the CS61B-sp21 labs and projects.
 
 ## lab
 
